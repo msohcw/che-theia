@@ -20,6 +20,7 @@ export class CheTaskImpl implements CheTask {
         this.cheTaskMain = rpc.getProxy(PLUGIN_RPC_CONTEXT.CHE_TASK_MAIN);
         this.runnerMap = new Map();
         this.taskMap = new Map();
+        console.log('========================  new CheTaskImpl');
     }
     async registerTaskRunner(type: string, runner: TaskRunner): Promise<Disposable> {
         this.runnerMap.set(type, runner);
@@ -34,7 +35,9 @@ export class CheTaskImpl implements CheTask {
     async $runTask(id: number, config: TaskConfiguration, ctx?: string): Promise<void> {
         const runner = this.runnerMap.get(config.type);
         if (runner) {
+            console.log('========================  before run ' + id);
             const task = await runner.run(config, ctx);
+            console.log('========================  after run ' + id);
             this.taskMap.set(id, task);
         }
     }
@@ -48,9 +51,13 @@ export class CheTaskImpl implements CheTask {
     }
 
     async $getTaskInfo(id: number): Promise<TaskInfo | undefined> {
+        console.log('========================  get task info ' + id);
         const task = this.taskMap.get(id);
         if (task) {
+            console.log('========================  get task FOUND ' + id);
             return task.getRuntimeInfo();
+        } else {
+            console.log('========================  get task NOT FOUND ' + id);
         }
     }
 

@@ -28,9 +28,12 @@ export class CheTaskClientImpl implements CheTaskClient {
     }
 
     async getTaskInfo(id: number): Promise<TaskInfo | undefined> {
+        console.log('+++++++++++++++++++++++  che task client // get task info ');
         if (this.taskInfoHandler) {
+            console.log('+++++++++++++++++++++++  che task client // before taskInfoHandler ');
             return await this.taskInfoHandler(id);
         }
+        console.log('+++++++++++++++++++++++  che task client // NO taskInfoHandler ');
     }
 
     get onKillEvent(): Event<number> {

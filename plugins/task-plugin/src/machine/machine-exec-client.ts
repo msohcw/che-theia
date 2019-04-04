@@ -15,18 +15,30 @@ import { createConnection } from './websocket';
 import { applySegmentsToUri } from '../uri-helper';
 
 const CREATE_METHOD_NAME: string = 'create';
+const EXIT_METHOD_NAME: string = 'onExecExit';
+const ERROR_METHOD_NAME: string = 'onExecError';
 const CONNECT_TERMINAL_SEGMENT: string = 'connect';
 
 export interface MachineIdentifier {
     workspaceId: string,
     machineName: string
 }
+
 export interface MachineExec {
     identifier: MachineIdentifier,
     cmd: string[],
     cwd?: string,
     tty: boolean,
     id?: number
+}
+
+export interface ExecExitEvent {
+    id: number;
+}
+
+export interface ExecErrorEvent {
+    id: number;
+    stack: string;
 }
 
 export interface TerminalProcessOutputHandler {
@@ -43,8 +55,18 @@ export class MachineExecClient {
     protected readonly cheWorkspaceClient!: CheWorkspaceClient;
 
     async getExecId(machineExec: MachineExec): Promise<number> {
+        console.log('!!!!!!!!!!!!!!!!!! getExecId');
         const connection = await this.getConnection();
         const request = new rpc.RequestType<MachineExec, number, void, void>(CREATE_METHOD_NAME);
+        const exitNotification = new rpc.NotificationType<ExecExitEvent, void>(EXIT_METHOD_NAME);
+        connection.onNotification(exitNotification, (event: ExecExitEvent) => {
+            console.log('!!!!!!!!!!!!!!!!!! EXIT ' + event.id);
+        });
+
+        const errorNotification = new rpc.NotificationType<ExecErrorEvent, void>(ERROR_METHOD_NAME);
+        connection.onNotification(errorNotification, (event: ExecErrorEvent) => {
+            console.log('!!!!!!!!!!!!!!!!!! ERROR ' + event.id + ' /// ' + event.stack);
+        });
         return await connection.sendRequest(request, machineExec);
     }
 

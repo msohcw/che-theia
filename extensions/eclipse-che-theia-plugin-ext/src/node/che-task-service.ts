@@ -28,6 +28,7 @@ export class CheTaskServiceImpl implements CheTaskService {
         this.disposableMap = new Map();
         this.clients = [];
         this.taskId = 0;
+        console.log('///////////////////////  NEW che task service  ');
     }
 
     async registerTaskRunner(type: string): Promise<void> {
@@ -40,8 +41,11 @@ export class CheTaskServiceImpl implements CheTaskService {
         const runTask = async (config: TaskConfiguration, ctx?: string): Promise<Task> => {
             const id = this.taskId++;
             for (const client of this.clients) {
+                console.log('///////////////////////  che task service // before run task ');
                 await client.runTask(id, config, ctx);
+                console.log('///////////////////////  che task service // after run task ');
             }
+            console.log('///////////////////////  che task service // before new che task ');
             return new CheTask(id, this.taskManager, this.logger, { label: config.label, config, context: ctx }, this.clients);
         };
     }
@@ -79,20 +83,27 @@ class CheTask extends Task {
         super(taskManager, logger, options);
         this.clients = clients;
         this.taskId = id;
+        console.log('///////////////////////  che task service // new che task ');
     }
 
     async getRuntimeInfo(): Promise<TaskInfo> {
+        console.log('///////////////////////  che task service // get runtime info ');
         for (const client of this.clients) {
+            console.log('///////////////////////  che task service // for client ');
             const taskInfo = await client.getTaskInfo(this.taskId);
             if (taskInfo) {
+                console.log('///////////////////////  che task service // return task info ');
                 return {
                     taskId: this.taskId,
                     terminalId: taskInfo.terminalId,
                     ctx: taskInfo.ctx,
                     config: taskInfo.config
                 };
+            } else {
+                console.log('///////////////////////  che task service // NO task info ');
             }
         }
+        console.log('///////////////////////  che task service // before throw error ');
         throw new Error('Information not found');
     }
 
