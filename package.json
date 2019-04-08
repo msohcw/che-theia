@@ -22,5 +22,8 @@
       "extensions/*",
       "plugins/*"
     ]
+  },
+  "dependencies": {
+    "nsfw": "^1.2.2"
   }
 }

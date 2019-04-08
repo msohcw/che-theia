@@ -39,7 +39,17 @@ context('Check Extensions are installed', () => {
        '@eclipse-che/theia-remote',
        '@eclipse-che/theia-activity-tracker',
        '@eclipse-che/theia-terminal',
+       '@eclipse-che/hello-world-extension',
        '@eclipse-che/theia-dashboard-extension']);
+    });
+
+  })
+
+  it('Expect Hello World is in installed theia', () => {
+    cy.theiaExtensionsList().then((value) => {
+      expect(value).to.contains.members(['@theia/plugin-ext',
+       '@eclipse-che/hello-world-extension',
+       ]);
     });
 
   })
