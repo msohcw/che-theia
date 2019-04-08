@@ -9,5 +9,5 @@ extensions:
     - extensions/che-theia-hosted-plugin-manager-extension
     - extensions/eclipse-che-theia-dashboard
     - extensions/eclipse-che-theia-activity-tracker
-    - extensions/theia-hello-world-extension/hello-world-extension
+    - extensions/eclipse-che-hello-world-extension
   checkoutTo: master
